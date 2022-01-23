@@ -1,0 +1,44 @@
+def create_matrix(m, n):
+  my_matrix = []
+  for i in range(m):
+    my_row = []
+    for j in range(n):
+      my_row.append(0)
+    my_matrix.append(my_row)
+  return my_matrix
+
+
+def add_matrices(m1, m2):
+  if m1 == [] or m2 == []:
+      return []
+
+  if len(m1) != len(m2) or len(m1[0]) != len(m2[0]):
+      return []
+
+  num_rows = len(m1)
+  num_cols = len(m1[0])
+  m0 = create_matrix(num_rows, num_cols)
+
+  for i in range(num_rows):
+    for j in range(num_cols):
+       m0[i][j] = m1[i][j] + m2[i][j]
+  return m0
+
+
+r1 = [4,5,6]
+r2 = [6,8,9]
+r3 = [10,14,16]
+
+matrix = [r1, r2, r3]
+
+def print_matrix(m):
+  if m == []:
+    return
+
+  num_rows = len(m)
+  num_col = len(m[0])
+  for row in m:
+    line_to_print = ""
+    for num in row:
+      line_to_print += str(num) + " "
+    print(line_to_print)
