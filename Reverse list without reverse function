@@ -1,0 +1,10 @@
+def reverse_list(mylist):
+  i = mylist
+  idx = len(i) - 1
+  newList = []
+  if i == 0:
+    print("[]")
+  while (idx >= 0):
+    newList.append(i[idx])
+    idx = idx - 1
+  return newList
