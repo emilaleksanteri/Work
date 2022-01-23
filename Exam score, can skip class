@@ -1,0 +1,7 @@
+def score75(total, correct, wrong):
+  max_score = total * 2 * 0.75
+  new_correct = min(max_score, correct *2)
+  new_wrong = (min(wrong, max(total * 0.75 - correct, 0)))
+  score75 = ((new_correct + new_wrong)/max_score) * 100
+  print(str(score75) + "%")
+  return
