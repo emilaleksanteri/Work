@@ -1,0 +1,10 @@
+def multiply(a, b):
+  sum = 0
+  while (b != 0):
+    if b > 0:
+      sum += a
+      b -= 1
+    elif b < 0:
+      sum -= a
+      b += 1
+  return(sum)
