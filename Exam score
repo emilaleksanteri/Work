@@ -1,0 +1,4 @@
+def score(total, correct, wrong):
+  score = (correct*2 + wrong * 1) / (total *2 ) *100
+  print(str(score) + "%")
+  return
