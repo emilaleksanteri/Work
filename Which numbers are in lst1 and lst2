@@ -1,0 +1,13 @@
+lst1 = [2,3,2,4]
+lst2 = [2,2,4]
+
+def intersection(lst1, lst2):
+    if not lst1 and lst2:
+        return []
+    elif lst1 == lst2:
+        return lst1
+    elif lst1[0] == lst2[0]:
+        return lst1[0] , intersection(lst1[1:],lst2)
+    else:
+        return intersection(lst1[1:],lst2[1:])
+print(intersection(lst1[1:],lst2))
