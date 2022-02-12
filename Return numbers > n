@@ -1,0 +1,10 @@
+lst1 = [1,2,3,4]
+n = 2
+def filter_gt_n(lst, n):
+    if not lst:
+        return []
+    elif n >= lst[0]:
+        return filter_gt_n(lst[1:],n)
+    else:
+        return [lst[0]] , filter_gt_n(lst[1:],n)
+print(filter_gt_n(lst1,n))
