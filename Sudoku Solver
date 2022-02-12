@@ -1,0 +1,102 @@
+# Sudoku Solver
+
+board = [[0, 7, 6, 4, 0, 0, 1, 0, 0],
+         [0, 4, 5, 3, 0, 6, 0, 0, 0],
+         [0, 0, 0, 7, 0, 0, 0, 4, 0],
+         [0, 0, 0, 0, 0, 8, 6, 0, 0],
+         [4, 0, 0, 0, 0, 1, 0, 0, 0],
+         [6, 0, 3, 0, 4, 0, 8, 0, 0],
+         [5, 1, 0, 0, 0, 0, 0, 0, 9],
+         [0, 0, 0, 0, 0, 4, 5, 0, 1],
+         [8, 2, 0, 0, 6, 5, 0, 7, 3]]
+
+#what are the rows and columns and empty spaces are in the sukoku
+
+row = len(board)
+col = len(board[0])
+num = 0
+
+#making the board look like sudoku, not like a list
+
+def print_board(board):
+    for row in board:
+        row_print = ""
+        for value in row:
+            row_print += str(value) + " "
+        print(row_print)
+
+#to check if a number can be placed in 0 on the board
+#using col, row, and num within the function as we are checkig col and row for num(empty space)
+#also checks, if there is a number on that row already, another number on row or col cannot equal the same
+
+def can_be_placed(col, row, num):
+
+    #for columns in board, if the space is num, empty, we can place a number here, so False
+
+    for i in range(0, 9):
+        if board[col][i] == num:
+            return False
+    #same for rows, if there are any nums, empty spaces, within the row, we can place a number here
+
+    for i in range(0, 9):
+        if board[i][row] == num:
+            return False
+
+#checking the same done for rows and cols for the 3x3 grids
+#(row//3)*3 and (col//3)*3 create the definition of the squares,
+#whole row and col divided into 3 and it includes 3 of each line
+
+    row1 = (row//3)*3
+    col1 = (col//3)*3
+    for i in range(0,3):
+        for j in range(0,3):
+
+            #same here, if is empty and also if number is already within square then it cannot be placed again
+
+            if board[col1+i][row1+j] == num:
+                return False
+    return True
+#if cant do anything, returns True
+
+#for solving the sudoku board in terms of the board
+
+def solve(board):
+
+    #for the lenght of the column 0 - 8, 9 different possibilites
+
+    for col in range(9):
+
+        #for the lenght of the row
+
+        for row in range(9):
+            if board[col][row] == 0:
+
+                #for any number from 1 to 9
+
+                for num in range(1,10):
+
+                    #calling our check if possible to place number here function for all steps
+                    #This allows for the program to make sure any number placed is valid
+                    #also, when solved everything will be true, so board is done
+
+                    if can_be_placed(col,row,num):
+                        board[col][row] = num
+
+                        #calling for solve function so that steps will be looped over and over
+
+                        solve(board)
+
+                        #backtracking, so if there is a 0, number couldnt be solved for some reason
+                        #the program will go back to previous steps and redo untill number can be placed
+
+                        board[col][row] = 0
+
+                        #to avoid an infinite loop, return function wrtitten for the for range(1,10) statement
+                return
+#return print_board(board) so that once board is complete we print the finalized sudoku in
+    #our cool print function that displays the board clearly
+
+    return print_board(board)
+
+
+print(solve(board))
