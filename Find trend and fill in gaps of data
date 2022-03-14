@@ -1,0 +1,77 @@
+#libraries
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+
+#file read
+data = pd.read_csv("GPAsmort - 1.csv")
+data.head()
+
+#features to measure
+
+data = data[["Hours", "GPA"]]
+
+#plot Hrs size vs GPA
+
+plt.scatter(data["Hours"] , data["GPA"] , color="blue")
+plt.xlabel("Hours")
+plt.ylabel("GPA")
+plt.show()
+
+#training 80% used 
+
+train = data[:(int((len(data)*0.8)))]
+test = data[(int((len(data)*0.8))):]
+
+#modeling
+#sklearn package to model the data
+
+from sklearn import linear_model
+regr = linear_model.LinearRegression()
+
+train_x = np.array(train[["Hours"]])
+train_y = np.array(train[["GPA"]])
+
+regr.fit(train_x, train_y)
+
+#coefficients
+
+print("coefficients : ",regr.coef_)                 #slope
+print("Intercept : ",regr.intercept_)               #intercept
+
+#plotting regression line:
+
+plt.scatter(train["Hours"], train["GPA"], color = 'blue')
+plt.plot(train_x, regr.coef_*train_x + regr.intercept_, '-r')
+plt.xlabel("Hours")
+plt.ylabel("GPA")
+
+#predicting values
+#function:
+
+def get_regression_predictions(input_features,intercept,slope):
+	predicted_values = input_features*slope + intercept
+
+	return predicted_values
+
+#predicting GPA from Hrs
+
+my_HRS = 2.5
+
+estimatd_GPA = get_regression_predictions(my_HRS, regr.intercept_[0], regr.coef_[0][0])
+print("Estimated GPA :" ,estimatd_GPA)
+
+#checking accuracy for test data
+
+from sklearn.metrics import r2_score
+
+
+
+test_x = np.array(test[['Hours']])
+test_y = np.array(test[['GPA']])
+test_y_ = regr.predict(test_x)
+
+print("Mean absolute error: %.2f" % np.mean(np.absolute(test_y_ - test_y)))
+print("Mean sum of squares (MSE): %.2f" % np.mean((test_y_ - test_y) ** 2))
+print("R2-score: %.2f" % r2_score(test_y_, test_y))
