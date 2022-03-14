@@ -1,0 +1,104 @@
+import os 
+import numpy as np 
+import pandas as pd 
+import matplotlib.pyplot as plt
+%matplotlib inline
+from keras.models import Sequential
+from keras.layers import Dense,LSTM,Dropout
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+#data
+
+data = pd.read_csv('GOOG.csv')
+data.head()
+data.info()
+
+data["Close"]=pd.to_numeric(data.Close,errors='coerce')
+data = data.dropna()
+trainData = data.iloc[:,4:5].values
+data.info()
+
+#minmax
+from sklearn.preprocessing import MinMaxScaler
+
+sc = MinMaxScaler(feature_range=(0,1))
+trainData = sc.fit_transform(trainData)
+trainData.shape
+
+#train
+
+x_train = []
+y_train = []
+
+for i in range (100, 4000):  #60 is timestep and 4339 is lenght of data
+	x_train.append(trainData[i-100:i,0])
+	y_train.append(trainData[i,0])
+
+x_train, y_train = np.array(x_train), np.array(y_train)
+
+x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1],1)) #batch size axis
+x_train.shape 
+
+model = keras.Sequential()
+
+model.add(LSTM(units=100, return_sequences = True, input_shape=(x_train.shape[1],1)))
+model.add(Dropout(0.2))
+
+model.add(LSTM(units=100, return_sequences = True))
+model.add(Dropout(0.2))
+
+model.add(LSTM(units=100, return_sequences = True))
+model.add(Dropout(0.2))
+
+model.add(LSTM(units=100, return_sequences = False))
+model.add(Dropout(0.2))
+
+model.add(Dense(units =1))
+model.compile(optimizer='sgd', loss=tf.keras.losses.MeanSquaredError())
+
+tf.keras.metrics.RootMeanSquaredError(
+    name='root_mean_squared_error', dtype=None
+)
+
+hist = model.fit(x_train, y_train, epochs =32 , batch_size = 32, verbose=2)
+
+plt.plot(hist.history['loss'])
+plt.title('training model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train'], loc='upper left')
+plt.show()
+
+testData = pd.read_csv('GOOG.csv')
+testData["Close"] = pd.to_numeric(testData.Close,errors='coerce')
+testData = testData.dropna()
+testData = testData.iloc[:,4:5]
+y_test = testData.iloc[100:,0:].values
+
+#input array
+
+inputClosing = testData.iloc[:,0:].values
+inputClosing_scaled = sc.transform(inputClosing)
+inputClosing_scaled.shape
+x_test = []
+lenght = len(testData)
+timestep = 100
+
+for i in range(timestep,lenght):
+  x_test.append(inputClosing_scaled[i-timestep:i,0])
+x_test = np.array(x_test)
+x_test = np.reshape(x_test,(x_test.shape[0],x_test.shape[1],1))
+x_test.shape
+
+y_pred = model.predict(x_test)
+y_pred
+
+plt.plot(y_test, color = 'red', label = 'real stock price')
+plt.plot(predicted_price, color = 'green', label = 'predicted stock price')
+plt.title('GOOG price prediction')
+plt.xlabel('time')
+plt.ylabel('price($)')
+plt.legend()
+plt.show()
